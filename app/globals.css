@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    transition: all 0.3s ease;
+  }
+}
+
+@layer components {
+  .wizard-card {
+    @apply bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-6;
+  }
+  
+  .wizard-button {
+    @apply px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105 active:scale-95;
+  }
+  
+  .wizard-button-primary {
+    @apply wizard-button bg-ultramine text-white hover:bg-blue-700;
+  }
+  
+  .wizard-button-secondary {
+    @apply wizard-button bg-eucalyptus text-white hover:bg-green-700;
+  }
+  
+  .wizard-input {
+    @apply w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-ultramine focus:border-transparent;
+  }
+  
+  .step-indicator {
+    @apply flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium;
+  }
+  
+  .step-indicator.active {
+    @apply bg-ultramine text-white;
+  }
+  
+  .step-indicator.completed {
+    @apply bg-eucalyptus text-white;
+  }
+  
+  .step-indicator.pending {
+    @apply bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300;
+  }
+}
