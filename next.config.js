@@ -12,17 +12,21 @@ const nextConfig = {
   // App Router is stable in Next.js 14, no experimental flag needed
   reactStrictMode: true,
   
-  // Static export configuration for GitHub Pages
-  output: 'export',
+  // Static export configuration for GitHub Pages (only in production)
+  ...(process.env.NODE_ENV === 'production' && {
+    output: 'export',
+    // Disable image optimization for static export
+    images: {
+      unoptimized: true,
+    },
+    basePath: '/ai-assist-lab',
+    assetPrefix: '/ai-assist-lab',
+  }),
   
-  // Disable image optimization for static export
-  images: {
-    unoptimized: true,
+  // Environment variables for GitHub Pages deployment
+  env: {
+    NEXT_PUBLIC_BASE_PATH: process.env.NODE_ENV === 'production' ? '/ai-assist-lab' : '',
   },
-  
-  // Set base path for GitHub Pages (if deploying to a repository)
-  // Uncomment and modify if your repo name is not your GitHub username
-  // basePath: '/your-repo-name',
   
   // Ensure trailing slash is false for better GitHub Pages compatibility
   trailingSlash: false,
