@@ -11,6 +11,13 @@ const withPWA = require('next-pwa')({
 const nextConfig = {
   // App Router is stable in Next.js 14, no experimental flag needed
   reactStrictMode: true,
+  // Configure output to docs folder for GitHub Pages
+  output: 'export',
+  distDir: 'docs',
+  trailingSlash: true,
+  images: {
+    unoptimized: true
+  }
 }
 
 module.exports = withPWA(nextConfig)
