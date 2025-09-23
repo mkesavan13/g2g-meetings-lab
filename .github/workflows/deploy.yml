@@ -3,8 +3,6 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -32,6 +30,12 @@ jobs:
           node-version: '18'
           cache: 'yarn'
           
+      - name: Enable Corepack
+        run: corepack enable
+        
+      - name: Install Yarn
+        run: corepack prepare yarn@4.5.1 --activate
+          
       - name: Setup Pages
         uses: actions/configure-pages@v4
         with:
@@ -50,7 +54,7 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
             
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
         
       - name: Build with Next.js
         run: yarn build
