@@ -1,15 +1,13 @@
 'use client'
 
-import { MessageSquare, CheckCircle, RotateCcw, HelpCircle } from 'lucide-react'
+import { MessageSquare, CheckCircle, RotateCcw } from 'lucide-react'
 import { useWizard } from '../../contexts/WizardContext'
 import { CopyablePrompt } from '../CopyablePrompt'
-import { TestingInstructionsModal } from '../TestingInstructionsModal'
 import { useRef, useEffect, useState } from 'react'
 
 export function Step5Coding() {
   const { nextStep, prevStep, botCredentials, markPromptCompleted, isPromptCompleted, completedPrompts, setCompletedPrompts } = useWizard()
   const promptRefs = useRef<(HTMLDivElement | null)[]>([])
-  const [isModalOpen, setIsModalOpen] = useState(false)
   const [isHeaderSticky, setIsHeaderSticky] = useState(false)
   const headerRef = useRef<HTMLDivElement>(null)
 
@@ -96,14 +94,6 @@ export function Step5Coding() {
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium"
-              >
-                <HelpCircle className="w-4 h-4" />
-                <span className="hidden sm:inline">How to test the code?</span>
-                <span className="sm:hidden">Help</span>
-              </button>
               <button
                 onClick={resetStep5Prompts}
                 className="flex items-center justify-center w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-gray-700 dark:text-gray-300"
@@ -229,12 +219,6 @@ export function Step5Coding() {
           </button>
         </div>
       </div>
-
-      {/* Testing Instructions Modal */}
-      <TestingInstructionsModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-      />
     </div>
   )
 }
