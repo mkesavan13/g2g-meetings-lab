@@ -16,6 +16,14 @@ export function Step3CreateBot() {
     return `aiassistantlab-${usernameBeforeAt}@webex.bot`
   }
 
+  // Generate bot username without @webex.bot suffix for copying
+  const getBotUsernameForCopy = () => {
+    if (!developerCredentials.username) return 'aiassistantlab'
+    
+    const usernameBeforeAt = developerCredentials.username.split('@')[0]
+    return `aiassistantlab-${usernameBeforeAt}`
+  }
+
   const copyToClipboard = async (text: string, field: string) => {
     try {
       await navigator.clipboard.writeText(text)
@@ -129,9 +137,9 @@ export function Step3CreateBot() {
                             <div>
                               <p className="text-velvet-grey mb-1"><strong>Bot Name:</strong></p>
                               <div className="flex items-center space-x-2">
-                                <p className="font-mono bg-white dark:bg-gray-700 p-2 rounded text-xs flex-1">AI Assistant Lab Bot</p>
+                                <p className="font-mono bg-white dark:bg-gray-700 p-2 rounded text-xs flex-1">AIAssistantLabBot</p>
                                 <button
-                                  onClick={() => copyToClipboard('AI Assistant Lab Bot', 'botName')}
+                                  onClick={() => copyToClipboard('AIAssistantLabBot', 'botName')}
                                   className="flex items-center justify-center w-8 h-8 bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 rounded transition-colors"
                                   title="Copy Bot Name"
                                 >
@@ -148,7 +156,7 @@ export function Step3CreateBot() {
                               <div className="flex items-center space-x-2">
                                 <p className="font-mono bg-white dark:bg-gray-700 p-2 rounded text-xs flex-1">{generateBotUsername()}</p>
                                 <button
-                                  onClick={() => copyToClipboard(generateBotUsername(), 'botUsername')}
+                                  onClick={() => copyToClipboard(getBotUsernameForCopy(), 'botUsername')}
                                   className="flex items-center justify-center w-8 h-8 bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 rounded transition-colors"
                                   title="Copy Bot Username"
                                 >
