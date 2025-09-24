@@ -7,7 +7,8 @@ import { CopyablePrompt } from '../CopyablePrompt'
 export function Step6FinalPrompt() {
   const { nextStep, prevStep, botCredentials } = useWizard()
 
-  const finalPrompt = `Create a Webex bot using Webex APIs (access token: "${botCredentials.token}", webhook server URL: "${botCredentials.webhookUrl}") running on port 3000 which can listen to messages in a space using the Webex webhooks. Add no filters or secret to the webhook. It should send responses based on the following cases: 
+  const finalPrompt = `Create a Webex bot using Webex APIs running on port 3000 which can listen to messages in a space using the Webex webhooks. Add no filters or secret to the webhook. When the webhook is invoked with messages, it should send responses based on the following cases: 
+
 1. When the message starts with the keyword Echo. Like "Echo {message}", respond "You said: {message}"
 
 2. If not, consider it a mathematical expression and evaluate it using \`eval\`. Respond "Result: {evaluated_expression}"
@@ -18,7 +19,11 @@ export function Step6FinalPrompt() {
 
 5. My Bot name is "${botCredentials.name}". If it is present in the message, remove it and then any trailing spaces. Consider that to be the actual message and then start the evaluation
 
-6. For webhook creation, If the error response is 409, instead of printing the error, just print webhook is already created`
+6. For webhook creation, If the error response is 409, instead of printing the error, just print webhook is already created
+
+Here are the credentials:
+1. access token: "${botCredentials.token}"
+2. webhook server URL: "${botCredentials.webhookUrl}"`
 
   return (
     <div className="max-w-4xl mx-auto animate-fade-in">
