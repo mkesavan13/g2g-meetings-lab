@@ -1,10 +1,10 @@
-# LAB-1544 - Build on Webex with Cisco AI Assistant
+# Guest to Guest Meetings Lab
 
-A session for developers to learn how to build Webex bots using AI assistance.
+Transform user interactions: A real-world application of guest-to-guest capabilities.
 
 ## Overview
 
-This interactive wizard guides developers through building a complete Webex bot step by step, with AI-generated code snippets and hands-on testing opportunities.
+This interactive wizard guides developers through setting up Guest-to-Guest meeting capabilities step by step, with hands-on configuration and testing opportunities.
 
 ## Features
 
@@ -102,4 +102,4 @@ app/
 
 ## License
 
-This project is designed for educational purposes as part of Cisco's AI Assistant development lab sessions.
+This project is designed for educational purposes as part of Cisco's Guest to Guest Meetings development lab sessions.

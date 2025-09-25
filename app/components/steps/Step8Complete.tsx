@@ -3,7 +3,7 @@
 import { CheckCircle, Star, RefreshCw, ExternalLink, Github, Clock } from 'lucide-react'
 import { useWizard } from '../../contexts/WizardContext'
 
-export function Step7ThankYou() {
+export function Step8Complete() {
   const { resetProgress, getFinalJourneyDuration } = useWizard()
 
   const handleRestart = () => {
@@ -23,10 +23,10 @@ export function Step7ThankYou() {
             Congratulations! 🎉
           </h2>
           <h3 className="text-2xl font-semibold mb-4">
-            You&apos;ve completed LAB-1544
+            You&apos;ve completed G2G Meetings Lab
           </h3>
           <p className="text-lg text-velvet-grey">
-            Build on Webex with Cisco AI Assistant: A session for developers
+            Transform user interactions with guest-to-guest capabilities
           </p>
         </div>
 
@@ -35,7 +35,7 @@ export function Step7ThankYou() {
             <Star className="w-8 h-8 text-eucalyptus mx-auto mb-3" />
             <h4 className="font-semibold mb-2">What You Built</h4>
             <p className="text-sm text-velvet-grey">
-              A fully functional Webex bot with echo, math evaluation, and smart filtering capabilities
+              A complete Guest-to-Guest meeting integration with sandbox, service app, and guest tokens
             </p>
           </div>
 
@@ -43,7 +43,7 @@ export function Step7ThankYou() {
             <Star className="w-8 h-8 text-ultramine mx-auto mb-3" />
             <h4 className="font-semibold mb-2">Skills Gained</h4>
             <p className="text-sm text-velvet-grey">
-              Webex API integration, webhook handling, and AI-assisted development workflows
+              Webex service app creation, admin authorization, guest token generation, and Webex Meetings SDK app development
             </p>
           </div>
 
@@ -51,7 +51,7 @@ export function Step7ThankYou() {
             <Star className="w-8 h-8 text-passion-fruit mx-auto mb-3" />
             <h4 className="font-semibold mb-2">Ready for More</h4>
             <p className="text-sm text-velvet-grey">
-              You&apos;re now equipped to build more advanced Webex bots, integrations, and importantly AI Assistant!
+              You&apos;re now equipped to build Guest-to-Guest meeting applications and advanced Webex integrations!
             </p>
           </div>
         </div>
@@ -99,10 +99,10 @@ export function Step7ThankYou() {
 
         <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
           <p className="text-sm text-velvet-grey">
-            Thank you for completing this AI-assisted development lab session!
+            Thank you for completing this guest-to-guest meetings lab session!
           </p>
           <p className="text-xs text-velvet-grey mt-2">
-            LAB-1544 - Build on Webex with Cisco AI Assistant
+            Guest to Guest Meetings Lab
           </p>
         </div>
       </div>

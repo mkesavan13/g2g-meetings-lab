@@ -65,7 +65,7 @@ export function InstallPrompt() {
         </div>
         
         <p className="text-xs text-velvet-grey mb-3">
-          Install AI Assistant Lab for easy access and offline functionality.
+          Install Guest to Guest Meetings Lab for easy access and offline functionality.
         </p>
         
         <div className="flex space-x-2">

@@ -45,7 +45,6 @@ interface WizardContextType {
   markStepCompleted: (step: number) => void
   markPromptCompleted: (promptId: string) => void
   isPromptCompleted: (promptId: string) => boolean
-  resetLab: () => void
   resetProgress: () => void
   getSessionInfo: () => { sessionStartTime: string; lastAccessTime: string }
   hasDeveloperCredentials: () => boolean
@@ -57,7 +56,7 @@ interface WizardContextType {
 
 const WizardContext = createContext<WizardContextType | undefined>(undefined)
 
-const STORAGE_KEY = 'lab-1544-wizard-state-v2' // Updated key to force fresh start
+const STORAGE_KEY = 'LAB-2843-wizard-state-v2' // Updated key to force fresh start
 
 const defaultState: WizardState = {
   currentStep: 1,
@@ -174,10 +173,10 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
 
   const nextStep = () => {
     markStepCompleted(currentStep)
-    const newStep = Math.min(currentStep + 1, 7)
+    const newStep = Math.min(currentStep + 1, 8)
     
-    // Stop timer when completing Step 6 (going to Step 7)
-    if (currentStep === 6 && newStep === 7) {
+    // Stop timer when completing Step 7 (going to Step 8)
+    if (currentStep === 7 && newStep === 8) {
       if (journeyStartTime && !journeyEndTime) {
         setJourneyEndTime(new Date().toISOString())
       }
@@ -212,33 +211,6 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
     return completedPrompts[promptId] || false
   }
 
-  const resetLab = () => {
-    setCurrentStep(1)
-    setCompletedSteps(new Set())
-    setBotCredentialsState({
-      token: '',
-      email: '',
-      name: '',
-      webhookUrl: ''
-    })
-    setDeveloperCredentialsState({
-      username: '',
-      password: ''
-    })
-    setCompletedPrompts({})
-    setSessionInfo({
-      sessionStartTime: new Date().toISOString(),
-      lastAccessTime: new Date().toISOString()
-    })
-    setJourneyStartTime(null)
-    setJourneyEndTime(null)
-    
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem(STORAGE_KEY)
-    }
-    
-    console.log('🔄 Lab session reset')
-  }
 
   const resetProgress = () => {
     setCurrentStep(1)
@@ -252,6 +224,14 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
     })
     setJourneyStartTime(null)
     setJourneyEndTime(null)
+    
+    // Clear stored client secret and tokens
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('g2g-client-secret')
+      localStorage.removeItem('g2g-access-token')
+      localStorage.removeItem('g2g-refresh-token')
+      localStorage.removeItem('step5-substep1-complete')
+    }
     
     console.log('🔄 Lab progress reset')
   }
@@ -339,7 +319,6 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
       markStepCompleted,
       markPromptCompleted,
       isPromptCompleted,
-      resetLab,
       resetProgress,
       getSessionInfo,
       hasDeveloperCredentials,

@@ -16,12 +16,13 @@ export function SlidoSidebar() {
       {/* Content */}
       <div className="h-full pb-16">
         <iframe 
-          src="https://app.sli.do/event/nf1MwoiDWpA3YF1jLXaWYy" 
+          src="https://app.sli.do/event/1A4cgLc9qeYxXA7LrQmpMj" 
           height="100%" 
           width="100%" 
           frameBorder="0" 
+          style={{minHeight: '560px'}}
           allow="clipboard-write" 
-          title="Slido Interactions"
+          title="Slido"
           className="border-0"
         />
       </div>

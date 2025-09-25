@@ -1,7 +1,7 @@
 {
-  "name": "aiassist-lab",
+  "name": "g2g-meetings-lab",
   "version": "1.0.0",
-  "description": "LAB-1544 - Build on Webex with Cisco AI Assistant: A session for developers",
+  "description": "Guest to Guest Meetings Lab: Transform user interactions with real-world guest-to-guest capabilities",
   "private": true,
   "packageManager": "yarn@4.5.1",
   "scripts": {

@@ -2,14 +2,14 @@ import './globals.css'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'LAB-1544 - Build on Webex with Cisco AI Assistant',
-  description: 'A session for developers to build Webex bots with AI assistance',
+  title: 'Guest to Guest Meetings Lab',
+  description: 'Transform user interactions: A real-world application of guest-to-guest capabilities',
   manifest: '/manifest.json',
   themeColor: '#0672EF',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'AI Assistant Lab',
+    title: 'Guest to Guest Meetings Lab',
   },
   formatDetection: {
     telephone: false,
@@ -37,7 +37,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#0672EF" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="AI Assistant Lab" />
+        <meta name="apple-mobile-web-app-title" content="Guest to Guest Meetings Lab" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="msapplication-TileColor" content="#0672EF" />
         <meta name="msapplication-config" content="/browserconfig.xml" />

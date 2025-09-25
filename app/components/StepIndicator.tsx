@@ -5,11 +5,12 @@ import { useWizard } from '../contexts/WizardContext'
 
 const stepTitles = [
   'Welcome',
-  'Login',
-  'Create Bot',
-  'Credentials',
-  'Build with AI Assistant',
-  'Full Prompt',
+  'Request Sandbox',
+  'Create Service App',
+  'Store Credentials',
+  'Admin Settings',
+  'Generate Token',
+  'Building an App',
   'Complete'
 ]
 
@@ -17,7 +18,7 @@ export function StepIndicator() {
   const { currentStep, completedSteps, goToStep } = useWizard()
 
   return (
-    <div className="flex items-center justify-center space-x-4 mb-8 overflow-x-auto pb-4">
+    <div className="flex items-center justify-center space-x-4 mb-8 overflow-x-auto pb-4 pt-2">
       {stepTitles.map((title, index) => {
         const stepNumber = index + 1
         const isActive = currentStep === stepNumber
@@ -26,7 +27,7 @@ export function StepIndicator() {
 
         return (
           <div key={stepNumber} className="flex items-center">
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center py-1">
               <button
                 onClick={() => isClickable && goToStep(stepNumber)}
                 disabled={!isClickable}

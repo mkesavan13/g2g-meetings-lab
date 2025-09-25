@@ -1,14 +1,11 @@
 'use client'
 
-import { Rocket, Bot, Code, RotateCcw } from 'lucide-react'
-import { useState } from 'react'
-import { useWizard, DeveloperCredentials } from '../../contexts/WizardContext'
-import { CredentialsModal } from '../CredentialsModal'
+import { Rocket, Users, Settings, RotateCcw, Code } from 'lucide-react'
+import { useWizard } from '../../contexts/WizardContext'
 
 export function Step1Welcome() {
-  const { nextStep, getSessionInfo, completedSteps, hasDeveloperCredentials, setDeveloperCredentials, startJourney } = useWizard()
+  const { nextStep, getSessionInfo, completedSteps, startJourney } = useWizard()
   const sessionInfo = getSessionInfo()
-  const [showCredentialsModal, setShowCredentialsModal] = useState(!hasDeveloperCredentials())
 
   const isRestoredSession = () => {
     const start = new Date(sessionInfo.sessionStartTime)
@@ -16,19 +13,9 @@ export function Step1Welcome() {
     return (now.getTime() - start.getTime()) > 60000 && completedSteps.size > 0
   }
 
-  const handleCredentialsSave = (credentials: DeveloperCredentials) => {
-    setDeveloperCredentials(credentials)
-    setShowCredentialsModal(false)
-    // Don't start journey automatically - wait for user to click "Start Your Journey"
-  }
-
   const handleStartJourney = () => {
     startJourney() // Start the timer
-    if (hasDeveloperCredentials()) {
-      nextStep()
-    } else {
-      setShowCredentialsModal(true)
-    }
+    nextStep()
   }
 
   return (
@@ -48,60 +35,72 @@ export function Step1Welcome() {
       <div className="wizard-card">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-ultramine to-eucalyptus bg-clip-text text-transparent">
-            LAB-1544
+            LAB-2843
           </h1>
           <h2 className="text-2xl font-semibold mb-2 text-gray-800 dark:text-white">
-            Build on Webex with Cisco AI Assistant
+            Transform user interactions
           </h2>
           <p className="text-lg text-velvet-grey">
-            A session for developers
+            A real-world application of guest-to-guest capabilities
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="flex flex-col items-center p-6 bg-gradient-to-br from-fountain-blue/10 to-ultramine/10 rounded-lg">
-            <Bot className="w-12 h-12 text-ultramine mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Create Your Bot</h3>
+            <Users className="w-12 h-12 text-ultramine mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Create Sandbox</h3>
             <p className="text-sm text-velvet-grey text-center">
-              Build a powerful Webex bot with AI assistance
+              Set up your Guest-to-Guest development environment
             </p>
           </div>
 
           <div className="flex flex-col items-center p-6 bg-gradient-to-br from-mantis/10 to-eucalyptus/10 rounded-lg">
-            <Code className="w-12 h-12 text-eucalyptus mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Learn Step by Step</h3>
+            <Settings className="w-12 h-12 text-eucalyptus mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Configure Service App</h3>
             <p className="text-sm text-velvet-grey text-center">
-              Follow guided prompts to build incrementally
+              Build and authorize your Webex service application
             </p>
           </div>
 
           <div className="flex flex-col items-center p-6 bg-gradient-to-br from-passion-fruit/10 to-mandarin/10 rounded-lg">
             <Rocket className="w-12 h-12 text-mandarin mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Deploy & Test</h3>
+            <h3 className="text-lg font-semibold mb-2">Generate Tokens</h3>
             <p className="text-sm text-velvet-grey text-center">
-              Test your bot in real Webex environments
+              Create guest tokens for meeting integration
+            </p>
+          </div>
+
+          <div className="flex flex-col items-center p-6 bg-gradient-to-br from-eucalyptus/10 to-mantis/10 rounded-lg">
+            <Code className="w-12 h-12 text-eucalyptus mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Build with Web Meetings SDK</h3>
+            <p className="text-sm text-velvet-grey text-center">
+              Integrate meetings into your real-world applications
             </p>
           </div>
         </div>
 
         <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 mb-8">
-          <h3 className="text-lg font-semibold mb-4">What You&apos;ll Build:</h3>
+          <h3 className="text-lg font-semibold mb-4">What You&apos;ll Learn:</h3>
           <ul className="text-left space-y-2 text-gray-700 dark:text-gray-300">
             <li className="flex items-center">
               <span className="w-2 h-2 bg-ultramine rounded-full mr-3"></span>
-              A Webex bot that responds to echo commands
+              Create a Guest-to-Guest sandbox environment
             </li>
             <li className="flex items-center">
               <span className="w-2 h-2 bg-eucalyptus rounded-full mr-3"></span>
-              Mathematical expression evaluator
+              Build and configure a Webex service application
             </li>
             <li className="flex items-center">
               <span className="w-2 h-2 bg-fountain-blue rounded-full mr-3"></span>
-              Webhook integration for real-time messaging
+              Request and approve admin authorization
             </li>
             <li className="flex items-center">
               <span className="w-2 h-2 bg-mantis rounded-full mr-3"></span>
-              Smart message filtering and bot name recognition
+              Generate guest tokens for meeting integration
+            </li>
+            <li className="flex items-center">
+              <span className="w-2 h-2 bg-eucalyptus rounded-full mr-3"></span>
+              Build real-world applications with Web Meetings SDK
             </li>
           </ul>
         </div>
@@ -115,11 +114,6 @@ export function Step1Welcome() {
           </button>
         </div>
 
-        <CredentialsModal
-          isOpen={showCredentialsModal}
-          onClose={() => setShowCredentialsModal(false)}
-          onSave={handleCredentialsSave}
-        />
       </div>
     </div>
   )

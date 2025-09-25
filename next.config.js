@@ -19,13 +19,13 @@ const nextConfig = {
     images: {
       unoptimized: true,
     },
-    basePath: '/ai-assist-lab',
-    assetPrefix: '/ai-assist-lab',
+    basePath: '/g2g-meetings-lab',
+    assetPrefix: '/g2g-meetings-lab',
   }),
   
   // Environment variables for GitHub Pages deployment
   env: {
-    NEXT_PUBLIC_BASE_PATH: process.env.NODE_ENV === 'production' ? '/ai-assist-lab' : '',
+    NEXT_PUBLIC_BASE_PATH: process.env.NODE_ENV === 'production' ? '/g2g-meetings-lab' : '',
   },
   
   // Ensure trailing slash is false for better GitHub Pages compatibility

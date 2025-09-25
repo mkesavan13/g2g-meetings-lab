@@ -18,7 +18,7 @@ export default function OfflinePage() {
             You&apos;re offline
           </h1>
           <p className="text-velvet-grey mb-6">
-            It looks like you&apos;ve lost your internet connection. The AI Assistant Lab requires an internet connection to function properly.
+            It looks like you&apos;ve lost your internet connection. The Guest to Guest Meetings Lab requires an internet connection to function properly.
           </p>
         </div>
 
@@ -43,7 +43,7 @@ export default function OfflinePage() {
 
         <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
           <p className="text-xs text-velvet-grey">
-            LAB-1544 - AI Assistant Lab (Offline Mode)
+            Guest to Guest Meetings Lab (Offline Mode)
           </p>
         </div>
       </div>
