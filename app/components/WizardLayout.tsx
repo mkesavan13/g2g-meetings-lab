@@ -13,7 +13,7 @@ import { Step2CreateSandbox } from './steps/Step2CreateSandbox'
 import { Step3CreateServiceApp } from './steps/Step3CreateServiceApp'
 import { Step4StoreCredentials } from './steps/Step4StoreCredentials'
 import { Step5AdminSettings } from './steps/Step5AdminSettings'
-import { Step6GenerateToken } from './steps/Step6GenerateToken'
+import { Step6SdkPrerequisites } from './steps/Step6SdkPrerequisites'
 import { Step7BuildingApp } from './steps/Step7BuildingApp'
 import { Step8Complete } from './steps/Step8Complete'
 
@@ -33,7 +33,7 @@ export function WizardLayout() {
       case 5:
         return <Step5AdminSettings />
       case 6:
-        return <Step6GenerateToken />
+        return <Step6SdkPrerequisites />
       case 7:
         return <Step7BuildingApp />
       case 8:

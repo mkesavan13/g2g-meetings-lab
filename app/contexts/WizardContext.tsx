@@ -231,6 +231,7 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
       localStorage.removeItem('g2g-access-token')
       localStorage.removeItem('g2g-refresh-token')
       localStorage.removeItem('step5-substep1-complete')
+      localStorage.removeItem('step6-substep1-complete')
     }
     
     console.log('🔄 Lab progress reset')

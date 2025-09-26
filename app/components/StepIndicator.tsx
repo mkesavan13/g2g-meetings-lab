@@ -9,7 +9,7 @@ const stepTitles = [
   'Create Service App',
   'Store Credentials',
   'Admin Settings',
-  'Generate Token',
+  'SDK Pre-requisites',
   'Building an App',
   'Complete'
 ]
