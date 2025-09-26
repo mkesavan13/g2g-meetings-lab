@@ -490,7 +490,7 @@ export function Step6SdkPrerequisites() {
                   <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
                     <h5 className="text-sm font-semibold mb-2">API Parameters</h5>
                     <div className="text-xs font-mono space-y-1">
-                      <div><strong>timezone:</strong> "America/Los_Angeles" (PST)</div>
+                      <div><strong>timezone:</strong> &quot;America/Los_Angeles&quot; (PST)</div>
                       <div><strong>enabledJoinBeforeHost:</strong> true</div>
                     </div>
                   </div>
