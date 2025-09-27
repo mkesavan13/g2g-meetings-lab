@@ -234,6 +234,23 @@ export function Step3CreateServiceApp() {
                                     )}
                                   </button>
                                 </div>
+                                <div className="flex items-center space-x-2">
+                                  <div className="font-mono bg-white dark:bg-gray-700 p-2 rounded text-xs flex-1 flex justify-between items-center">
+                                    <span>guest-issuer:write</span>
+                                    {copiedScopes.has('scope4') && <span className="text-xs text-eucalyptus font-semibold">✓ copied</span>}
+                                  </div>
+                                  <button
+                                    onClick={() => copyToClipboard('guest-issuer:write', 'scope4')}
+                                    className="flex items-center justify-center w-8 h-8 bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 rounded transition-colors"
+                                    title="Copy Scope"
+                                  >
+                                    {copiedField === 'scope4' ? (
+                                      <Check className="w-3 h-3 text-green-600" />
+                                    ) : (
+                                      <Copy className="w-3 h-3 text-gray-600 dark:text-gray-400" />
+                                    )}
+                                  </button>
+                                </div>
                               </div>
                             </div>
                           </div>

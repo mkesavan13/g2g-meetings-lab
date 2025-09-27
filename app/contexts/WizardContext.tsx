@@ -227,11 +227,26 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
     
     // Clear stored client secret and tokens
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('g2g-client-secret')
-      localStorage.removeItem('g2g-access-token')
-      localStorage.removeItem('g2g-refresh-token')
-      localStorage.removeItem('step5-substep1-complete')
-      localStorage.removeItem('step6-substep1-complete')
+    localStorage.removeItem('g2g-client-secret')
+    localStorage.removeItem('g2g-access-token')
+    localStorage.removeItem('g2g-refresh-token')
+    localStorage.removeItem('g2g-meeting-number')
+    localStorage.removeItem('g2g-meeting-id')
+    localStorage.removeItem('g2g-meeting-web-link')
+    localStorage.removeItem('g2g-meeting-sip-address')
+    localStorage.removeItem('g2g-meeting-password')
+    localStorage.removeItem('g2g-meeting-title')
+    localStorage.removeItem('g2g-meeting-start-time')
+    localStorage.removeItem('g2g-meeting-end-time')
+    localStorage.removeItem('g2g-meeting-start-link')
+    localStorage.removeItem('g2g-meeting-join-link')
+    localStorage.removeItem('g2g-agent-token')
+    localStorage.removeItem('g2g-customer-token')
+    localStorage.removeItem('g2g-agent-name')
+    localStorage.removeItem('g2g-customer-name')
+    localStorage.removeItem('step5-substep1-complete')
+    localStorage.removeItem('step6-substep1-complete')
+    localStorage.removeItem('step7-completed-steps')
     }
     
     console.log('🔄 Lab progress reset')
