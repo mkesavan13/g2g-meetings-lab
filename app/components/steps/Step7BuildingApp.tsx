@@ -344,16 +344,6 @@ async function joinVideoMeeting(userType) {
         
         console.log('Meeting join initiated - waiting for full connection...');
         
-        // Ensure audio context is resumed (required by some browsers)
-        if (typeof AudioContext !== 'undefined') {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            if (audioContext.state === 'suspended') {
-                audioContext.resume().then(() => {
-                    console.log('Audio context resumed');
-                }).catch(e => console.log('Audio context resume error:', e));
-            }
-        }
-        
         // Note: Loader will be hidden by meeting:stateChanged event when fully joined
         
     } catch (error) {
