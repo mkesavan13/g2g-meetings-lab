@@ -8,10 +8,10 @@ export function Step6SdkPrerequisites() {
   const { nextStep, prevStep } = useWizard()
   const [clientSecret, setClientSecret] = useState('')
   const [copiedSecret, setCopiedSecret] = useState(false)
+  const [copiedAgentToken, setCopiedAgentToken] = useState(false)
+  const [copiedCustomerToken, setCopiedCustomerToken] = useState(false)
   const [accessToken, setAccessToken] = useState('')
-  const [refreshToken, setRefreshToken] = useState('')
   const [showAccessToken, setShowAccessToken] = useState(false)
-  const [showRefreshToken, setShowRefreshToken] = useState(false)
   const [showClientSecret, setShowClientSecret] = useState(false)
   const [isStep1Complete, setIsStep1Complete] = useState(false)
   
@@ -47,7 +47,6 @@ export function Step6SdkPrerequisites() {
   useEffect(() => {
     const storedSecret = localStorage.getItem('g2g-client-secret')
     const storedAccessToken = localStorage.getItem('g2g-access-token')
-    const storedRefreshToken = localStorage.getItem('g2g-refresh-token')
     const step1Complete = localStorage.getItem('step6-substep1-complete')
     const storedStartLink = localStorage.getItem('g2g-meeting-start-link')
     const storedJoinLink = localStorage.getItem('g2g-meeting-join-link')
@@ -69,9 +68,6 @@ export function Step6SdkPrerequisites() {
     }
     if (storedAccessToken) {
       setAccessToken(storedAccessToken)
-    }
-    if (storedRefreshToken) {
-      setRefreshToken(storedRefreshToken)
     }
     if (step1Complete === 'true') {
       setIsStep1Complete(true)
@@ -299,7 +295,19 @@ export function Step6SdkPrerequisites() {
         localStorage.setItem('g2g-meeting-start-time', startFormatted)
         localStorage.setItem('g2g-meeting-end-time', endFormatted)
         
-        console.log('Meeting information stored successfully:', {
+        // Clear existing guest tokens when new meeting is created
+        setAgentToken('')
+        setCustomerToken('')
+        setAgentName('')
+        setCustomerName('')
+        
+        // Clear guest tokens from localStorage
+        localStorage.removeItem('g2g-agent-token')
+        localStorage.removeItem('g2g-customer-token')
+        localStorage.removeItem('g2g-agent-name')
+        localStorage.removeItem('g2g-customer-name')
+        
+        console.log('Meeting information stored successfully and guest tokens cleared:', {
           meetingNumber: meetingNum,
           meetingId: meetingId,
           webLink: meetingWebLink,
@@ -489,6 +497,130 @@ export function Step6SdkPrerequisites() {
     }
   }
 
+  // Regenerate agent token
+  const regenerateAgentToken = async () => {
+    if (!agentName.trim() || !accessToken.trim()) {
+      alert('Please ensure agent name and access token are available')
+      return
+    }
+
+    setIsCreatingAgentToken(true)
+    
+    const timestamp = Date.now()
+    const subject = `Wx1G2G-Agent-${timestamp}`
+
+    const requestBody = {
+      subject: subject,
+      displayName: agentName.trim()
+    }
+    
+    console.log('Regenerating agent token with payload:', requestBody)
+    
+    try {
+      const response = await fetch('https://webexapis.com/v1/guests/token', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken.trim()}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+      })
+
+      console.log('Regenerate agent token API Response:', {
+        status: response.status,
+        statusText: response.statusText
+      })
+
+      if (response.ok) {
+        const tokenData = await response.json()
+        console.log('Agent token regenerated successfully:', tokenData)
+        
+        const newToken = tokenData.token || tokenData.accessToken || ''
+        setAgentToken(newToken)
+        localStorage.setItem('g2g-agent-token', newToken)
+        localStorage.setItem('g2g-agent-name', agentName.trim())
+        
+        console.log('Agent token regenerated and stored')
+      } else {
+        const errorData = await response.text()
+        console.error('Agent token regeneration failed:', {
+          status: response.status,
+          statusText: response.statusText,
+          body: errorData
+        })
+        alert(`Failed to regenerate agent token: ${response.status} ${response.statusText}`)
+      }
+    } catch (error) {
+      console.error('Network error regenerating agent token:', error)
+      alert(`Network error: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    } finally {
+      setIsCreatingAgentToken(false)
+    }
+  }
+
+  // Regenerate customer token
+  const regenerateCustomerToken = async () => {
+    if (!customerName.trim() || !accessToken.trim()) {
+      alert('Please ensure customer name and access token are available')
+      return
+    }
+
+    setIsCreatingCustomerToken(true)
+    
+    const timestamp = Date.now()
+    const subject = `Wx1G2G-Customer-${timestamp}`
+    
+    const requestBody = {
+      subject: subject,
+      displayName: customerName.trim()
+    }
+    
+    console.log('Regenerating customer token with payload:', requestBody)
+    
+    try {
+      const response = await fetch('https://webexapis.com/v1/guests/token', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken.trim()}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+      })
+
+      console.log('Regenerate customer token API Response:', {
+        status: response.status,
+        statusText: response.statusText
+      })
+
+      if (response.ok) {
+        const tokenData = await response.json()
+        console.log('Customer token regenerated successfully:', tokenData)
+        
+        const newToken = tokenData.token || tokenData.accessToken || ''
+        setCustomerToken(newToken)
+        localStorage.setItem('g2g-customer-token', newToken)
+        localStorage.setItem('g2g-customer-name', customerName.trim())
+        
+        console.log('Customer token regenerated and stored')
+      } else {
+        const errorData = await response.text()
+        console.error('Customer token regeneration failed:', {
+          status: response.status,
+          statusText: response.statusText,
+          body: errorData
+        })
+        alert(`Failed to regenerate customer token: ${response.status} ${response.statusText}`)
+      }
+    } catch (error) {
+      console.error('Network error regenerating customer token:', error)
+      alert(`Network error: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    } finally {
+      setIsCreatingCustomerToken(false)
+    }
+  }
+
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text)
@@ -499,19 +631,35 @@ export function Step6SdkPrerequisites() {
     }
   }
 
-  const handleAccessTokenChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    setAccessToken(value)
-    if (value.trim()) {
-      localStorage.setItem('g2g-access-token', value)
+  const copyAgentToken = async () => {
+    try {
+      await navigator.clipboard.writeText(agentToken)
+      setCopiedAgentToken(true)
+      setTimeout(() => setCopiedAgentToken(false), 2000)
+    } catch (err) {
+      console.error('Failed to copy agent token: ', err)
     }
   }
 
-  const handleRefreshTokenChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const copyCustomerToken = async () => {
+    try {
+      await navigator.clipboard.writeText(customerToken)
+      setCopiedCustomerToken(true)
+      setTimeout(() => setCopiedCustomerToken(false), 2000)
+    } catch (err) {
+      console.error('Failed to copy customer token: ', err)
+    }
+  }
+
+  const handleAccessTokenChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
-    setRefreshToken(value)
+    setAccessToken(value)
+    // Always save to localStorage when access token changes
     if (value.trim()) {
-      localStorage.setItem('g2g-refresh-token', value)
+      localStorage.setItem('g2g-access-token', value.trim())
+      console.log('Access token saved to localStorage')
+    } else {
+      localStorage.removeItem('g2g-access-token')
     }
   }
 
@@ -687,54 +835,12 @@ export function Step6SdkPrerequisites() {
                     Secure Local Storage
                   </h3>
                   <p className="text-xs text-gray-700 dark:text-gray-300">
-                    Your access and refresh tokens are stored locally in your browser for this lab session only. 
-                    They are not transmitted to any external servers and will be cleared when you reset the lab progress.
+                    Your access token is stored locally in your browser for this lab session only. 
+                    It is not transmitted to any external servers and will be cleared when you reset the lab progress.
                   </p>
                 </div>
                 
                 <div className="space-y-4">
-                  {/* Refresh Token Input */}
-                  <div>
-                    <label className="flex items-center text-sm font-medium mb-2">
-                      <RefreshCw className="w-4 h-4 mr-2 text-eucalyptus" />
-                      Refresh Token
-                    </label>
-                    <div className="relative">
-                      <input
-                        type={showRefreshToken ? "text" : "password"}
-                        value={refreshToken}
-                        onChange={handleRefreshTokenChange}
-                        placeholder="Paste your refresh token here..."
-                        className="wizard-input pr-12"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowRefreshToken(!showRefreshToken)}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                      >
-                        {showRefreshToken ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                      </button>
-                    </div>
-                    {refreshToken && (
-                      <button
-                        onClick={() => copyToken(refreshToken, 'refresh')}
-                        className="flex items-center mt-2 px-3 py-1 text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
-                      >
-                        {copiedRefreshToken ? (
-                          <>
-                            <Check className="w-3 h-3 mr-1 text-eucalyptus" />
-                            Copied!
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="w-3 h-3 mr-1" />
-                            Copy Token
-                          </>
-                        )}
-                      </button>
-                    )}
-                  </div>
-
                   {/* Access Token Input */}
                   <div>
                     <label className="flex items-center text-sm font-medium mb-2">
@@ -777,7 +883,7 @@ export function Step6SdkPrerequisites() {
                     )}
                   </div>
 
-                  {(accessToken || refreshToken) && (
+                  {accessToken && (
                     <div className="p-3 bg-eucalyptus/10 border border-eucalyptus/20 rounded-lg">
                       <div className="flex items-center mb-2">
                         <Check className="w-4 h-4 text-eucalyptus mr-2" />
@@ -792,7 +898,7 @@ export function Step6SdkPrerequisites() {
         </div>
 
             {/* Mark Step 6.1 Complete Button */}
-            {!isStep1Complete && accessToken.trim() && refreshToken.trim() && (
+            {!isStep1Complete && accessToken.trim() && (
               <div className="text-center mt-6">
                 <button
                   onClick={markStep1Complete}
@@ -1024,11 +1130,27 @@ export function Step6SdkPrerequisites() {
                               className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-xs"
                             />
                             <button
-                              onClick={() => copyLink(agentToken, 'start')}
+                              onClick={copyAgentToken}
                               className="px-3 py-2 bg-eucalyptus text-white rounded-md hover:bg-green-700 flex items-center"
                               title="Copy Agent Token"
                             >
-                              <Copy className="w-4 h-4" />
+                              {copiedAgentToken ? (
+                                <Check className="w-4 h-4" />
+                              ) : (
+                                <Copy className="w-4 h-4" />
+                              )}
+                            </button>
+                            <button
+                              onClick={regenerateAgentToken}
+                              disabled={isCreatingAgentToken || !accessToken.trim()}
+                              className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center"
+                              title="Regenerate Agent Token"
+                            >
+                              {isCreatingAgentToken ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <RefreshCw className="w-4 h-4" />
+                              )}
                             </button>
                           </div>
                         </div>
@@ -1091,11 +1213,27 @@ export function Step6SdkPrerequisites() {
                               className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-xs"
                             />
                             <button
-                              onClick={() => copyLink(customerToken, 'start')}
+                              onClick={copyCustomerToken}
                               className="px-3 py-2 bg-eucalyptus text-white rounded-md hover:bg-green-700 flex items-center"
                               title="Copy Customer Token"
                             >
-                              <Copy className="w-4 h-4" />
+                              {copiedCustomerToken ? (
+                                <Check className="w-4 h-4" />
+                              ) : (
+                                <Copy className="w-4 h-4" />
+                              )}
+                            </button>
+                            <button
+                              onClick={regenerateCustomerToken}
+                              disabled={isCreatingCustomerToken || !accessToken.trim()}
+                              className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center"
+                              title="Regenerate Customer Token"
+                            >
+                              {isCreatingCustomerToken ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <RefreshCw className="w-4 h-4" />
+                              )}
                             </button>
                           </div>
                         </div>

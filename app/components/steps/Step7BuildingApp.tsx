@@ -113,6 +113,24 @@ export function Step7BuildingApp() {
     }
   }
 
+  // Function to copy all code blocks combined
+  const copyAllCode = async () => {
+    try {
+      // Combine all code blocks (skip the first one which is just the CDN script)
+      const allCode = codeSteps.slice(1).map(step => {
+        return '// ' + step.title + '\n' + step.code
+      }).join('\n\n')
+      
+      await navigator.clipboard.writeText(allCode)
+      setCopiedCode(prev => ({ ...prev, 'all-code': true }))
+      setTimeout(() => {
+        setCopiedCode(prev => ({ ...prev, 'all-code': false }))
+      }, 2000)
+    } catch (error) {
+      console.error('Failed to copy all code:', error)
+    }
+  }
+
   const [completedSteps, setCompletedSteps] = useState<{[key: string]: boolean}>({})
 
   const markStepComplete = (stepId: string, stepIndex: number) => {
@@ -150,30 +168,17 @@ export function Step7BuildingApp() {
     {
       id: 'webex-init',
       title: 'Step 2: Initialize Webex SDK Variables',
-      description: 'Add this code to sdk-impl.js - Your tokens from Step 6 are automatically populated',
+      description: 'Add this code to sdk-impl.js - Your tokens from Step 6 are automatically populated. Note: UI utility functions are already included in the app via ui-utils.js',
       code: `// Global variables for Webex SDK
 let webex;
 let meeting;
 let localStream;
+let localMedia = {};
 
 // Your actual tokens from Step 6 of the lab
 const customerToken = '${actualTokens.customerToken}';
 const agentToken = '${actualTokens.agentToken}';
 const meetingLink = '${actualTokens.meetingLink}';
-
-// HTML element references - get all elements at the top
-const videoModal = document.getElementById('video-chat-modal');
-const videoLoader = document.getElementById('video-loader');
-const videoChatWindow = document.getElementById('video-chat-window');
-const localVideo = document.getElementById('local-video');
-const remoteVideo = document.getElementById('remote-video');
-const startVideoChatBtn = document.getElementById('start-video-chat');
-const acceptCallBtn = document.getElementById('accept-call');
-const endCallBtn = document.getElementById('end-call');
-const closeVideoChatBtn = document.getElementById('close-video-chat');
-const muteAudioBtn = document.getElementById('mute-audio');
-const muteVideoBtn = document.getElementById('mute-video');
-const incomingCall = document.getElementById('incoming-call');
 
 // Initialize Webex function
 function initializeWebex(accessToken) {
@@ -208,14 +213,19 @@ async function getUserMedia() {
     try {
         console.log('Getting user media...');
         localStream = await navigator.mediaDevices.getUserMedia({
-            audio: true,
-            video: true
+            audio: {
+                echoCancellation: true,
+                noiseSuppression: true,
+                autoGainControl: true
+            },
+            video: {
+                width: { ideal: 640 },
+                height: { ideal: 480 }
+            }
         });
         
-        // Display local video
-        if (localVideo) {
-            localVideo.srcObject = localStream;
-        }
+        // Display local video using utility function
+        setLocalVideoStream(localStream);
         
         console.log('Local media ready');
         return localStream;
@@ -227,10 +237,26 @@ async function getUserMedia() {
 
 // Handle remote media streams
 function handleRemoteMedia(media) {
-    console.log('Received remote media:', media.type);
+    console.log('Received remote media:', media.type, media);
     
-    if (media.type === 'remoteVideo' && remoteVideo) {
-        remoteVideo.srcObject = media.stream;
+    switch (media.type) {
+        case 'remoteVideo':
+            if (media.stream) {
+                console.log('Setting remote video stream');
+                setRemoteVideoStream(media.stream);
+            }
+            break;
+        case 'remoteAudio':
+            if (media.stream) {
+                console.log('Setting remote audio stream');
+                setRemoteAudioStream(media.stream);
+            }
+            break;
+        case 'remoteShare':
+            console.log('Remote screen share received');
+            break;
+        default:
+            console.log('Unknown media type:', media.type);
     }
 }`
     },
@@ -252,10 +278,8 @@ async function joinVideoMeeting(userType) {
             return;
         }
         
-        // Show video chat modal and loader using predefined elements
-        videoModal.style.display = 'flex';
-        videoLoader.style.display = 'flex';
-        videoChatWindow.style.display = 'none';
+        // Show video loader using utility function
+        showVideoLoader();
         
         // Initialize Webex
         await initializeWebex(accessToken);
@@ -267,12 +291,40 @@ async function joinVideoMeeting(userType) {
         // Get user media
         await getUserMedia();
         
+        // Create Webex media streams
+        const cameraStream = await webex.meetings.mediaHelpers.createCameraStream();
+        const microphoneStream = await webex.meetings.mediaHelpers.createMicrophoneStream();
+        
+        // Store local media streams for mute/unmute functionality
+        localMedia.cameraStream = cameraStream;
+        localMedia.microphoneStream = microphoneStream;
+        
         // Create meeting object
         console.log('Creating meeting...');
         meeting = await webex.meetings.create(meetingLink);
         
         // Set up media event listeners
         meeting.on('media:ready', handleRemoteMedia);
+        meeting.on('media:stopped', (media) => {
+            console.log('Media stopped:', media.type);
+        });
+        
+        // Listen for meeting state changes to hide loader when fully joined
+        meeting.on('meeting:stateChange', (state) => {
+            console.log('Meeting state changed:', state.payload.currentState);
+            
+            // Hide loader only when meeting is fully joined and active
+            if (state.payload.currentState === 'JOINED' || state.payload.currentState === 'ACTIVE') {
+                console.log('Meeting fully joined - hiding loader');
+                hideVideoLoader();
+            }
+        });
+        
+        // Additional event listeners for debugging
+        meeting.on('meeting:media:remote:start', handleRemoteMedia);
+        meeting.on('meeting:receiveTranscription:started', () => {
+            console.log('Remote participant joined');
+        });
         
         // Join meeting with media
         console.log('Joining meeting with media...');
@@ -282,27 +334,39 @@ async function joinVideoMeeting(userType) {
                 sendVideo: true,
                 receiveAudio: true,
                 receiveVideo: true,
-                allowMediaInLobby: true
+                allowMediaInLobby: true,
+                localStreams: {
+                    microphone: microphoneStream,
+                    camera: cameraStream
+                }
             }
         });
         
-        console.log('Successfully joined meeting!');
+        console.log('Meeting join initiated - waiting for full connection...');
         
-        // Hide loader and show video chat window
-        videoLoader.style.display = 'none';
-        videoChatWindow.style.display = 'block';
+        // Ensure audio context is resumed (required by some browsers)
+        if (typeof AudioContext !== 'undefined') {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioContext.state === 'suspended') {
+                audioContext.resume().then(() => {
+                    console.log('Audio context resumed');
+                }).catch(e => console.log('Audio context resume error:', e));
+            }
+        }
+        
+        // Note: Loader will be hidden by meeting:stateChanged event when fully joined
         
     } catch (error) {
         console.error('Error joining meeting:', error);
         alert('Failed to join video meeting: ' + error.message);
         
-        // Hide modal on error using predefined element
-        videoModal.style.display = 'none';
+        // Hide modal on error using utility function
+        hideVideoModal();
     }
 }
 
-// Leave meeting function
-async function leaveMeeting() {
+// End meeting function - leave the meeting
+async function endMeeting() {
     try {
         console.log('Leaving meeting...');
         
@@ -310,17 +374,18 @@ async function leaveMeeting() {
             await meeting.leave();
         }
         
-        // Stop local media
-        if (localStream) {
-            localStream.getTracks().forEach(track => track.stop());
-        }
+        // Stop all media streams using utility function
+        stopAllMediaStreams(localStream, localMedia);
         
-        // Clear video elements using predefined variables
-        if (localVideo) localVideo.srcObject = null;
-        if (remoteVideo) remoteVideo.srcObject = null;
+        // Clear local media references
+        localMedia.cameraStream = null;
+        localMedia.microphoneStream = null;
         
-        // Hide video chat modal using predefined element
-        videoModal.style.display = 'none';
+        // Clear video and audio elements using utility function
+        clearVideoElements();
+        
+        // Hide video chat modal using utility function
+        hideVideoModal();
         
         console.log('Left meeting successfully');
         
@@ -352,12 +417,43 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // End call button
     if (endCallBtn) {
-        endCallBtn.addEventListener('click', leaveMeeting);
+        endCallBtn.addEventListener('click', endMeeting);
     }
     
     // Close video chat modal
     if (closeVideoChatBtn) {
-        closeVideoChatBtn.addEventListener('click', leaveMeeting);
+        closeVideoChatBtn.addEventListener('click', endMeeting);
+    }
+    
+    // Audio mute/unmute control using proper stream methods
+    if (muteAudioBtn) {
+        muteAudioBtn.addEventListener('click', () => {
+            if (localMedia.microphoneStream) {
+                const newMuteValue = !localMedia.microphoneStream.userMuted;
+                localMedia.microphoneStream.setUserMuted(newMuteValue);
+                console.log('Audio ' + (newMuteValue ? 'muted' : 'unmuted'));
+                
+                // Update button UI using utility function
+                updateMuteButton(muteAudioBtn, newMuteValue, 'audio');
+            }
+        });
+    }
+    
+    // Video mute/unmute control using proper stream methods
+    if (muteVideoBtn) {
+        muteVideoBtn.addEventListener('click', () => {
+            if (localMedia.cameraStream) {
+                const newMuteValue = !localMedia.cameraStream.userMuted;
+                localMedia.cameraStream.setUserMuted(newMuteValue);
+                console.log('Video ' + (newMuteValue ? 'muted' : 'unmuted'));
+                
+                // Hide/show local video based on mute state using utility function
+                toggleLocalVideo(!newMuteValue);
+                
+                // Update button UI using utility function
+                updateMuteButton(muteVideoBtn, newMuteValue, 'video');
+            }
+        });
     }
     
 });
@@ -385,15 +481,29 @@ console.log('Webex SDK integration ready!');`
             </p>
           </div>
           
-          {/* Reset Progress Button */}
-          <button
-            onClick={resetProgress}
-            className="absolute top-0 right-0 flex items-center px-3 py-2 text-sm bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-md hover:bg-red-200 dark:hover:bg-red-900/40 transition-colors border border-red-200 dark:border-red-800"
-            title="Reset all progress and start over"
-          >
-            <RefreshCw className="w-4 h-4 mr-1" />
-            Reset Progress
-          </button>
+          {/* Quick Start and Reset Progress Buttons */}
+          <div className="absolute top-0 right-0 flex items-center space-x-2">
+            <button
+              onClick={copyAllCode}
+              className="flex items-center px-3 py-2 text-sm bg-eucalyptus text-white rounded-md hover:bg-green-700 transition-colors"
+              title="Copy all code blocks at once"
+            >
+              {copiedCode['all-code'] ? (
+                <Check className="w-4 h-4 mr-1" />
+              ) : (
+                <Copy className="w-4 h-4 mr-1" />
+              )}
+              Quick Start
+            </button>
+            <button
+              onClick={resetProgress}
+              className="flex items-center px-3 py-2 text-sm bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-md hover:bg-red-200 dark:hover:bg-red-900/40 transition-colors border border-red-200 dark:border-red-800"
+              title="Reset all progress and start over"
+            >
+              <RefreshCw className="w-4 h-4 mr-1" />
+              Reset Progress
+            </button>
+          </div>
         </div>
 
         <div className="space-y-8">
@@ -410,6 +520,7 @@ console.log('Webex SDK integration ready!');`
               <p>4. <strong>Mark each step as complete</strong> to auto-scroll to the next section</p>
             </div>
           </div>
+
 
           {/* Code Steps */}
           {codeSteps.map((step, index) => (
