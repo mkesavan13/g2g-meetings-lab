@@ -1,6 +1,6 @@
 'use client'
 
-import { Settings, ExternalLink, CheckCircle, User, Globe, Copy, Check, Code } from 'lucide-react'
+import { Settings, ExternalLink, CheckCircle, User, Globe, Copy, Check, Code, AlertCircle } from 'lucide-react'
 import { useWizard } from '../../contexts/WizardContext'
 import { useState } from 'react'
 
@@ -83,6 +83,20 @@ export function Step3CreateServiceApp() {
                   <h4 className="text-lg font-semibold">Developer Portal Access</h4>
                 </div>
                 <p className="text-velvet-grey mb-3">Make sure you&apos;re logged into the Webex Developer Portal before starting these steps.</p>
+                
+                {/* Prominent Alert Note */}
+                <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mb-4">
+                  <div className="flex items-start">
+                    <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 mr-3 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <h5 className="font-semibold text-amber-800 dark:text-amber-200 mb-1">Important: Use Sandbox Credentials</h5>
+                      <p className="text-sm text-amber-700 dark:text-amber-300">
+                        Please login to the Developer Portal using the sandbox credentials you received via email after requesting the Guest-to-Guest sandbox.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
                   <p className="text-sm font-mono text-gray-700 dark:text-gray-300 mb-3">Visit developer.webex.com</p>
                   <a

@@ -162,7 +162,7 @@ export function Step7BuildingApp() {
     {
       id: 'cdn-include',
       title: 'Step 1: Include Webex SDK CDN',
-      description: 'Add this script tag to your HTML file to include the Webex SDK',
+      description: 'Add this script tag to your index.html file to include the Webex SDK. For this lab, we have already added this script tag to the index.html file',
       code: `<script src="https://unpkg.com/webex/umd/webex.min.js"></script>`
     },
     {
@@ -501,13 +501,17 @@ console.log('Webex SDK integration ready!');`
           <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6 border border-blue-200 dark:border-blue-800">
             <h3 className="text-lg font-semibold mb-3 flex items-center">
               <Info className="w-5 h-5 mr-2 text-blue-600" />
-              How to Use This Guide
+              How to test the code?
             </h3>
             <div className="text-sm space-y-2">
-              <p>1. <strong>Copy each JavaScript code block</strong> in order using the copy buttons</p>
-              <p>2. <strong>Paste code into sdk-impl.js</strong> - the existing HTML structure is already provided</p>
-              <p>3. <strong>Your tokens are automatically populated</strong> from Step 6 - no manual replacement needed</p>
-              <p>4. <strong>Mark each step as complete</strong> to auto-scroll to the next section</p>
+              <p>1. <strong>Clone the repository:</strong> http://github.com/mkesavan13/plan-my-trip</p>
+              <p>2. <strong>Open the cloned folder</strong> in Visual Studio Code</p>
+              <p>3. <strong>Read, understand and paste each code</strong> into sdk-impl.js</p>
+              <p>4. <strong>Mark each step as complete</strong> as you paste</p>
+              <p>5. <strong>Open Terminal &gt; New Terminal</strong> in VS Code</p>
+              <p>6. <strong>Do <code className="bg-gray-200 dark:bg-gray-700 px-1 rounded">npm install</code></strong></p>
+              <p>7. <strong>Do <code className="bg-gray-200 dark:bg-gray-700 px-1 rounded">npm run dev</code></strong></p>
+              <p>8. <strong>Open same URL in different browsers,</strong> login with agent and customer to see the G2G meetings</p>
             </div>
           </div>
 
